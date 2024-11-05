@@ -135,6 +135,7 @@
     import { getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { query, orderBy} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 
     // Firebase 구성 정보 설정
@@ -182,7 +183,10 @@
     // Read 부분
     async function displayComments() {
         $('#comment-section').empty(); // 기존 댓글 초기화 하고 불러오기
-        let docs = await getDocs(collection(db, "comments"));
+
+        const commentsQuery = query(collection(db, "comments"), orderBy("timestamp", "asc"));
+        let docs = await getDocs(commentsQuery);
+        
         docs.forEach((doc) => {
             let row = doc.data();
 
@@ -216,7 +220,7 @@
         const elapsedSeconds = Math.floor((now - timestamp) / 1000);
 
         let showTime;
-        if (elapsedSeconds == 0) {
+        if (elapsedSeconds <= 3) {
             showTime = `방금 전`;
         }
         else if (elapsedSeconds < 60) {
