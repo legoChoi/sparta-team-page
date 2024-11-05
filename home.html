@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인페이지</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 
-    
     <style>
-        /*구글 폰트*/
+        /* 구글 폰트 */
         @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&family=Jua&display=swap');
 
-        *{
+        * {
             font-family: "Jua", sans-serif;
         }
 
-        .header{
+        .header {
             font-size: 36px;
             color: bisque;
-            background-color: green;
             background-image: url('https://img.pikbest.com/photo/20240622/color-explosion-around-light-bulb-creativity-unleashed_10631938.jpg!w700wp');
             background-size: cover;
             background-position: right;
-            height: 400px;
+            height: 200px;
             padding: 100px;
-
         }
 
         .header>div {
@@ -32,17 +31,33 @@
             margin-top: 40px;
             margin-left: 20px;
         }
+
+        .team {
+            width: 100%;
+            height: calc(100vh - 200px); /* 100vh에서 header 높이만큼 뺀 값 */
+            overflow: hidden;
+        }
+
+        .team iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
+
     <div class="header">
         <h1 style="font-size: 50px;">아이디어 폭8단</h1>
         <div>
-            <p>아이디어가 폭8하고 싶은 사람들</p>
+            <p style="color: red;">아이디어가 폭8하고 싶은 사람들</p>
         </div>
-
-
-    
     </div>
+
+    <div class="team">
+        <iframe id="teamIframe" src="team.html"></iframe>
+    </div>
+
+
 </body>
 </html>
