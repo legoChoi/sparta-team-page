@@ -107,6 +107,32 @@
     }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#comment-form').submit(function(event) {
+        event.preventDefault();  
+
+        let nickname = $('#nickname').val();
+        let content = $('#content').val();
+
+        let commentHtml = `
+            <div class="comment">
+                <p><strong>${nickname}</strong>님</p>
+                <p>${content}</p>
+                <hr>
+            </div>
+        `;
+
+        $('#comment-section').append(commentHtml);
+
+        $('#nickname').val('');
+        $('#password').val('');
+        $('#content').val('');
+    });
+});
+</script>
 <body>
     <div class="header">
         <a href="home.html" class="fas fa-arrow-left"></a>
@@ -121,7 +147,7 @@
                 <div class="name">
                     <h1>이름 및 MBTI</h1>
                     <p>블로그 주소</p>
-                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a>
+                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a>   <!--링크드인 아이콘 삽입-->>
                     <a href="https://velog.io/@gkdl4239/posts" class="fas fa-home"></a>
 
                 </div>
@@ -136,16 +162,17 @@
             </div>
         </div>
         <hr>
+        <div id="comment-section"></div>
         <hr>
         <div class="card-body">
             <form id="comment-form" method="POST">
                 <div class="comment-form">
                     <div class="left">
-                        <input type="text" id="nickname" name="nickname" required>
-                        <input type="password" id="password" name="password" required>
+                        <input type="text" id="nickname" name="nickname" required placeholder="아이디">
+                        <input type="password" id="password" name="password" required placeholder="비밀번호">
                     </div>
                     <div class="right">
-                        <textarea class ="textbox" id="content" name="content" rows="6" required></textarea>
+                        <textarea class ="textbox" id="content" name="content" rows="6" required placeholder="댓글을 입력하세요"></textarea>
                         <input type="submit" value="등록" class="comment-submit-btn">
                     </div>
                 </div>
