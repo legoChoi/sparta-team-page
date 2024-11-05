@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alternating Image Layout</title>
+  <style>
+    .container {
+      width: 300px; 
+      margin: auto; 
+    }
+    .image-wrapper {
+      display: flex;
+      justify-content: flex-start; 
+      margin: 10px 0; 
+    }
+    .image-wrapper.right {
+      justify-content: flex-end; 
+    }
+    .image-wrapper img {
+      width: 140px; 
+      height: auto; 
+      cursor: pointer; 
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="image-wrapper">
+    <img src="photo/csw-photo.jpg" alt="Image 1" data-link="https://qlgh2gh.tistory.com/">
+  </div>
+  <div class="image-wrapper right">
+    <img src="photo/cwt-photo.JPG" alt="Image 2" data-link="https://qlgh2gh.tistory.com/">
+  </div>
+  <div class="image-wrapper">
+    <img src="photo/IMG_1927.jpg" alt="Image 3" data-link="https://qlgh2gh.tistory.com/">
+  </div>
+  <div class="image-wrapper right">
+    <img src="photo/ljy-photo.jpg" alt="Image 4" data-link="https://velog.io/@slatio/posts">
+  </div>
+  <div class="image-wrapper">
+    <img src="photo/IMG_1931.jpg" alt="Image 5" data-link="https://qlgh2gh.tistory.com/">
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.image-wrapper img').forEach(img => {
+    img.addEventListener('click', (e) => {
+      const link = e.target.getAttribute('data-link');
+      window.open(link, '_blank');
+    });
+  });
+</script>
+
+</body>
+</html>
