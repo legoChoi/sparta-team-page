@@ -50,7 +50,7 @@
 
     .name {
         display: block;
-        margin-left: 50px;
+        margin-left: 10px;
     }
 
     .intro {
@@ -77,6 +77,8 @@
 
     .left>input {
         display: block;
+        margin-bottom: 5px;
+
     }
 
     .comment-form {
@@ -117,58 +119,163 @@
 
     .comment-actions>i {
         font-size: 25px;
-        cursor : pointer;
-        gap : 10px;
+        cursor: pointer;
+        gap: 10px;
     }
+
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
-    $(document).ready(function () {
-        $('#comment-form').submit(function (event) {
-            event.preventDefault();
+<script type="module">
+    // Firebase SDK 라이브러리 가져오기
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { collection } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { query, orderBy} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-            let nickname = $('#nickname').val();
-            let content = $('#content').val();
 
-            // 닉네임과 내용 값 가져와서 붙이기
-            let commentHtml = `
-            <div class="comment">
-                <p><strong>${nickname}</strong>님</p>
-                <p>${content}</p>
-                <div class="comment-actions">
-                    <i class="fas fa-thumbs-up like-btn"> <span class="like-count">0</span></i>
-                    <i class="fas fa-times delete-btn"></i>
-                </div>
-                <hr>
-            </div>
-        `;
+    // Firebase 구성 정보 설정
+    const firebaseConfig = {
+        apiKey: "AIzaSyCc-iMAe7db19Fwsr9KuuDhKGLRVvHmJXU",
+        authDomain: "sprta-a08ed.firebaseapp.com",
+        projectId: "sprta-a08ed",
+        storageBucket: "sprta-a08ed.firebasestorage.app",
+        messagingSenderId: "1079179643325",
+        appId: "1:1079179643325:web:0d57d609fccebefea22ad4",
+        measurementId: "G-SV1F97QH20"
+    };
 
-            $('#comment-section').append(commentHtml);
 
-            $('#nickname').val('');
-            $('#password').val('');
-            $('#content').val('');
-        });
+    // Firebase 인스턴스 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        //좋아요를 눌렀을때 안의 텍스트값을 정수로 변환해서 값을 올리는 기능 
-        $('#comment-section').on('click', '.like-btn', function () {
-            const likeCountSpan = $(this).find('.like-count');
-            let likeCount = parseInt(likeCountSpan.text());
-            likeCountSpan.text(++likeCount);
-        });
 
-        //삭제버튼을 눌렀을때 부모 요소 삭제
-        $('#comment-section').on('click', '.delete-btn', function () {
-            $(this).closest('.comment').remove();
-        });
+    // Create 부분
+    $("#comment-form").submit(async function (event) {
+        event.preventDefault(); // 새로고침 방지
+
+        let nickname = $('#nickname').val();
+        let comment = $('#content').val();
+        let timestamp = new Date();
+
+        let doc = {
+            'nickname': nickname,
+            'comment': comment,
+            'likes': 0,            // 초기 좋아요 수는 0
+            'timestamp': timestamp
+        };
+
+        
+        await addDoc(collection(db, "comments"), doc);
+        alert('댓글 저장 완료!');
+
+        $('#nickname').val('');
+        $('#content').val(''); 
+
+        displayComments();
     });
-</script>
 
-<body>
+    // Read 부분
+    async function displayComments() {
+        $('#comment-section').empty(); // 기존 댓글 초기화 하고 불러오기
+
+        const commentsQuery = query(collection(db, "comments"), orderBy("timestamp", "asc"));
+        let docs = await getDocs(commentsQuery);
+        
+        docs.forEach((doc) => {
+            let row = doc.data();
+
+            let nickname = row['nickname'];
+            let comment = row['comment'];
+            let likes = row['likes'];
+            let timestamp = row['timestamp'].toDate();
+
+
+            let elapsedTime = calElapsedTime(timestamp);
+
+            let temp_html = `
+        <div class="comment" data-id="${doc.id}"">
+            <p><strong>${nickname}</strong>님</p>
+            <p>${comment}</p>
+            <div class="comment-actions">
+                <span class="elapsed-time">${elapsedTime}</span>
+                <i class="fas fa-thumbs-up like-btn"> <span class="like-count">${likes}</span></i>
+                <i class="fas fa-times delete-btn"></i>
+            </div>
+            <hr>
+        </div>`;
+
+            $('#comment-section').append(temp_html);
+        });
+    }
+
+    //댓글 시간 기록 계산 알고리즘
+    function calElapsedTime(timestamp) {
+        const now = new Date();
+        const elapsedSeconds = Math.floor((now - timestamp) / 1000);
+
+        let showTime;
+        if (elapsedSeconds <= 3) {
+            showTime = `방금 전`;
+        }
+        else if (elapsedSeconds < 60) {
+            showTime = `${elapsedSeconds}초 전`;
+        }
+        else if (elapsedSeconds < 3600) {
+            const mins = Math.floor(elapsedSeconds / 60)
+            showTime = `${mins}분 전`;
+        }
+        else if (elapsedSeconds < 86400) {
+            const hours = Math.floor(elapsedSeconds / 3600)
+            showTime = `${hours}시간 전`
+        }
+        else {
+            const days = Math.floor(elapsedSeconds / 86400)
+            showTime = `${days}일 전`;
+        }
+        return showTime;
+    }
+
+    //Update 부분 (좋아요 수)
+    $('#comment-section').on('click', '.like-btn', async function () {
+        
+        //현재 댓글 가리킴
+        const commentId = $(this).closest('.comment').data('id');
+
+        //좋아요 내 텍스트 부분 정수 형변환후 증가
+        const likeCountSpan = $(this).find('.like-count');
+        let currentLikes = parseInt(likeCountSpan.text());
+        likeCountSpan.text(++currentLikes);
+
+        //파이어베이스 내 저장
+        const commentRef = doc(db, "comments", commentId);
+        await updateDoc(commentRef, { likes: currentLikes });
+    });
+
+    //Delete 부분
+    $('#comment-section').on('click', '.delete-btn', async function () {
+
+        const commentElement = $(this).closest('.comment');
+        const commentId = commentElement.data('id');
+
+        
+        await deleteDoc(doc(db, "comments", commentId));
+        commentElement.remove();// 댓글 즉시 삭제
+        
+    });
+
+    displayComments();
+</script>
+<script>
+</script>
+<body style="margin-top: -18px;">
     <div class="header">
-        <a href="home.html" class="fas fa-arrow-left"></a>
+        <a href="team.html" class="fas fa-arrow-left" style="position: fixed;"></a>
     </div>
     <div class="main">
         <div class="wrap">
@@ -179,10 +286,8 @@
                 </div>
                 <div class="name">
                     <h1>이름 및 MBTI</h1>
-                    <!--링크드인 아이콘 삽입-->
-                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a>
+                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a>   <!--주소바로가기 아이콘 삽입-->
                     <a href="https://velog.io/@gkdl4239/posts" class="fas fa-home"></a>
-
                 </div>
             </div>
             <div class="intro">
@@ -207,7 +312,7 @@
                     <div class="right">
                         <textarea class="textbox" id="content" name="content" rows="6" required
                             placeholder="댓글을 입력하세요"></textarea>
-                        <input type="submit" value="등록" class="comment-submit-btn">
+                        <input style="margin-top : 10px" type="submit" value="등록" class="comment-submit-btn">
                     </div>
                 </div>
             </form>
