@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,21 +6,21 @@
   <title>Alternating Image Layout</title>
   <style>
     .container {
-      width: 300px; 
-      margin: auto; 
+      width: 300px;
+      margin: auto;
     }
     .image-wrapper {
       display: flex;
-      justify-content: flex-start; 
-      margin: 10px 0; 
+      justify-content: flex-start;
+      margin: 10px 0;
     }
     .image-wrapper.right {
-      justify-content: flex-end; 
+      justify-content: flex-end;
     }
     .image-wrapper img {
-      width: 140px; 
-      height: auto; 
-      cursor: pointer; 
+      width: 140px;
+      height: auto;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -29,30 +28,31 @@
 
 <div class="container">
   <div class="image-wrapper">
-    <img src="photo/csw-photo.jpg" alt="Image 1" data-link="https://qlgh2gh.tistory.com/">
+    <a href="member.html">
+      <img src="photo/csw-photo.jpg" alt="Image 1">
+    </a>
   </div>
   <div class="image-wrapper right">
-    <img src="photo/cwt-photo.JPG" alt="Image 2" data-link="https://qlgh2gh.tistory.com/">
+    <a href="member.html">
+      <img src="photo/cwt-photo.JPG" alt="Image 2">
+    </a>
   </div>
   <div class="image-wrapper">
-    <img src="photo/IMG_1927.jpg" alt="Image 3" data-link="https://qlgh2gh.tistory.com/">
+    <a href="member.html">
+      <img src="photo/IMG_1927.jpg" alt="Image 3">
+    </a>
   </div>
   <div class="image-wrapper right">
-    <img src="photo/ljy-photo.jpg" alt="Image 4" data-link="https://velog.io/@slatio/posts">
+    <a href="member.html">
+      <img src="photo/ljy-photo.jpg" alt="Image 4">
+    </a>
   </div>
   <div class="image-wrapper">
-    <img src="photo/IMG_1931.jpg" alt="Image 5" data-link="https://qlgh2gh.tistory.com/">
+    <a href="member.html">
+      <img src="photo/IMG_1931.jpg" alt="Image 5">
+    </a>
   </div>
 </div>
-
-<script>
-  document.querySelectorAll('.image-wrapper img').forEach(img => {
-    img.addEventListener('click', (e) => {
-      const link = e.target.getAttribute('data-link');
-      window.open(link, '_blank');
-    });
-  });
-</script>
 
 </body>
 </html>
