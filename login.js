@@ -27,6 +27,7 @@ document.getElementById('btn_login').addEventListener('click', () => {
     .then((userCredential) => {
       // Signed in 
       console.log(userCredential);
+      alert("로그인 성공!");
       location.href = "home.html";
       // ...
     })
