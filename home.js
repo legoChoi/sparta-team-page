@@ -9,33 +9,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const auth = getAuth();
 
-// Member
-// GET: /members/photos
-let memberPhotos = await getDocs(collection(db, "members"));
-let photos = [];
-
-memberPhotos.forEach((e) => {
-  console.log(e.data());
-  
-  photos.push({
-    memberId: e.id,
-    photo: e.data().photo
-  });
-});
-
-let target = photos[0];
-
 // GET: apis/members/:memberId
 // member 문서 ID로 검색
-let member = await getDoc(doc(db, "members", target.memberId));
-console.log(member.data());
+// let member = await getDoc(doc(db, "members", target.memberId));
 
 // GET: /members/:memberId/comments
-let comments = await getDocs(collection(db, 'members', target.memberId, 'comments'))
+// let comments = await getDocs(collection(db, 'members', target.memberId, 'comments'))
 
-comments.forEach((e) => {
-  console.log(e.data());
-})
+// comments.forEach((e) => {
+//   console.log(e.data());
+// })
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
