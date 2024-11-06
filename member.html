@@ -122,6 +122,7 @@
         font-size: 25px;
         cursor: pointer;
         gap: 10px;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .delete-box {
@@ -176,6 +177,11 @@
         display: inline-block;
         content: "\00d7";
         font-size: 15pt;
+    }
+
+    .like-count{
+        font-size: 20px;
+        -webkit-tap-highlight-color: transparent;
     }
 </style>
 
@@ -260,7 +266,8 @@
             <p>${comment}</p>
             <div class="comment-actions">
                 <span class="elapsed-time">${elapsedTime}</span>
-                <i class="fas fa-thumbs-up like-btn"> <span class="like-count">${likes}</span></i>
+                <i class="fas fa-thumbs-up like-btn"></i>
+                <span class="like-count">${likes}</span>
                 <div style="position: relative">
                     <i class="fas fa-times delete-btn" style=""></i>
                     <div class="delete-box">
@@ -311,13 +318,18 @@
         const commentId = $(this).closest('.comment').data('id');   //현재 위치(좋아요버튼) 에서 제일 가까운 댓글(현재 댓글) 의 id
 
         //좋아요 내 텍스트 부분 정수 형변환후 증가
-        const likeCountSpan = $(this).find('.like-count');
+        const likeCountSpan = $(this).siblings('.like-count');
+        console.log(likeCountSpan)
         let currentLikes = parseInt(likeCountSpan.text());
         likeCountSpan.text(++currentLikes);
 
         //파이어베이스 내 좋아요 수 업데이트
         const commentRef = doc(db, "comments", commentId);
         await updateDoc(commentRef, { likes: currentLikes });
+
+        if (likeCountSpan > 0) {
+
+        }
     });
 
     //Delete 부분
