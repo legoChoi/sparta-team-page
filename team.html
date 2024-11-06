@@ -19,6 +19,13 @@
       width: 140px;
       height: auto;
       cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* 입체 효과 */
+    .image-wrapper img:hover {
+      transform: perspective(600px) rotateY(10deg) scale(1.05);
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
