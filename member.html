@@ -160,9 +160,8 @@
 
     .box-close {
         height: 28px;
-        float: left;
         display: inline-block;
-        *display: inline;
+        
         border-radius: 0;
         padding: 0 3px;
         border: 0;
@@ -261,26 +260,28 @@
             
             // 댓글 붙이기
             let temp_html = `
-        <div class="comment" data-id="${doc.id}"">         
-            <p><strong>${nickname}</strong>님</p>
-            <p>${comment}</p>
-            <div class="comment-actions">
-                <span class="elapsed-time">${elapsedTime}</span>
-                <i class="fas fa-thumbs-up like-btn"></i>
-                <span class="like-count">${likes}</span>
-                <div style="position: relative">
-                    <i class="fas fa-times delete-btn" style=""></i>
-                    <div class="delete-box">
-                        <input type ="password" title="비밀번호" placeholder="비밀번호" class="box-password" id="box-password">
-                        <button type ="button" class="box-ok">확인</button>
-                        <button type="button" class="box-close">
+            <div class="comment" data-id="${doc.id}"">         
+                <p><strong>${nickname}</strong>님</p>
+                <p>${comment}</p>
+                <div class="comment-actions">
+                    <span class="elapsed-time">${elapsedTime}</span>
+                    <i class="fas fa-thumbs-up like-btn"></i>
+                    <span class="like-count">${likes}</span>
+                    <div style="position: relative">
+                        <i class="fas fa-times delete-btn" style=""></i>
+                        <div class="delete-box">
+                            <input type ="password" title="비밀번호" placeholder="비밀번호" class="box-password" id="box-password">
+                            <button type ="button" class="box-ok">확인</button>
+                            <button type="button" class="box-close">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <hr>
-        </div>`;
+                <hr>
+            </div>`;
 
+            
             $('#comment-section').append(temp_html);
+            
         });
     }
 
@@ -326,9 +327,10 @@
         const commentRef = doc(db, "comments", commentId);
         await updateDoc(commentRef, { likes: currentLikes });
 
-        if (likeCountSpan > 0) {
-
-        }
+        const likeColor = $(this)
+        console.log(likeColor)
+        likeColor.css('color','#29367c')
+        
     });
 
     //Delete 부분
@@ -405,7 +407,7 @@
         <div id="comment-section"></div>
 
         <div class="card-body">
-            <form id="comment-form" method="POST">
+            <form id="comment-form" method="POST">    
                 <div class="comment-form">
                     <div class="left">
                         <input type="text" id="nickname" name="nickname" required placeholder="아이디">
