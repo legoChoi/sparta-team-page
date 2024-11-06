@@ -283,6 +283,28 @@
     
     const intro = $('.intro').children('p');
 
+    // 멤버 프로필 사진
+    $('.profile .image img').attr('src', memberData.photo);
+
+    // 멤버 이름, mbti, 한마디
+    $('.name').children('h1').text(`${memberData.name} ${memberData.mbti}`);
+
+
+
+    if (memberData) {
+        intro[0].textContent = memberData.name;
+        intro[1].textContent = memberData.mbti;
+        intro[2].textContent = memberData.wrd;
+    };
+
+
+    // 멤버 깃헙, 홈페이지 링크
+    const links = $('.name').children('a');
+
+    memberData.links.forEach((e, idx) => {
+        if (e != 'undefined') links[idx].href = e;
+    });
+
     let docs = await getDocs(collection(db, "comments"));
 
     // Create 부분
