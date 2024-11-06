@@ -117,12 +117,66 @@
         gap: 10px;
     }
 
-    .comment-actions>i {
+    .fa-thumbs-up,
+    .fa-times {
         font-size: 25px;
         cursor: pointer;
         gap: 10px;
     }
 
+    .delete-box {
+        display: none;
+        position: absolute;
+        left: -220px;
+        bottom: -15px;
+        margin: 0;
+        width: 206px;
+        height: 28px;
+        border: 1px solid #29367c;
+
+    }
+
+    .box-password {
+        float: left;
+        width: 120px;
+        height: 28px;
+        border: 0;
+        padding: 0 5px;
+        line-height: 30px;
+    }
+
+    .box-ok {
+        float: left;
+        width: 50px;
+        height: 28px;
+        font-weight: bold;
+        border-radius: 0;
+        border: 0;
+        line-height: 28px;
+        background-color: #3b4890;
+        color: white;
+    }
+
+    .box-close {
+        height: 28px;
+        float: left;
+        display: inline-block;
+        *display: inline;
+        border-radius: 0;
+        padding: 0 3px;
+        border: 0;
+        cursor: pointer;
+        color: white;
+        font-size: 20px;
+        background-color: #29367c;
+
+    }
+
+    .box-close:after {
+        display: inline-block;
+        content: "\00d7";
+        font-size: 15pt;
+    }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -132,10 +186,10 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { collection } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getDocs, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { query, orderBy} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 
     // Firebase 구성 정보 설정
@@ -155,27 +209,28 @@
     const db = getFirestore(app);
 
 
+    let docs = await getDocs(collection(db, "comments"));
+
     // Create 부분
-    $("#comment-form").submit(async function (event) {
+    $("#comment-form").submit(async function (event) {      //댓글 입력시 이벤트
         event.preventDefault(); // 새로고침 방지
 
         let nickname = $('#nickname').val();
         let comment = $('#content').val();
-        let timestamp = new Date();
+        let password = $('#password').val();
+        let timestamp = new Date();             //타임스탬프는 입력할때 시간
 
         let doc = {
             'nickname': nickname,
+            'password': password,
             'comment': comment,
             'likes': 0,            // 초기 좋아요 수는 0
             'timestamp': timestamp
         };
 
-        
+
         await addDoc(collection(db, "comments"), doc);
         alert('댓글 저장 완료!');
-
-        $('#nickname').val('');
-        $('#content').val(''); 
 
         displayComments();
     });
@@ -184,9 +239,10 @@
     async function displayComments() {
         $('#comment-section').empty(); // 기존 댓글 초기화 하고 불러오기
 
-        const commentsQuery = query(collection(db, "comments"), orderBy("timestamp", "asc"));
+        const commentsQuery = query(collection(db, "comments"), orderBy("timestamp", "asc")); //타임스탬프 오름차순으로 정렬
         let docs = await getDocs(commentsQuery);
-        
+
+
         docs.forEach((doc) => {
             let row = doc.data();
 
@@ -195,17 +251,24 @@
             let likes = row['likes'];
             let timestamp = row['timestamp'].toDate();
 
-
-            let elapsedTime = calElapsedTime(timestamp);
-
+            let elapsedTime = calElapsedTime(timestamp); // 알고리즘에 의해 계산된 경과 시간
+            
+            // 댓글 붙이기
             let temp_html = `
-        <div class="comment" data-id="${doc.id}"">
+        <div class="comment" data-id="${doc.id}"">         
             <p><strong>${nickname}</strong>님</p>
             <p>${comment}</p>
             <div class="comment-actions">
                 <span class="elapsed-time">${elapsedTime}</span>
                 <i class="fas fa-thumbs-up like-btn"> <span class="like-count">${likes}</span></i>
-                <i class="fas fa-times delete-btn"></i>
+                <div style="position: relative">
+                    <i class="fas fa-times delete-btn" style=""></i>
+                    <div class="delete-box">
+                        <input type ="password" title="비밀번호" placeholder="비밀번호" class="box-password" id="box-password">
+                        <button type ="button" class="box-ok">확인</button>
+                        <button type="button" class="box-close">
+                    </div>
+                </div>
             </div>
             <hr>
         </div>`;
@@ -217,17 +280,17 @@
     //댓글 시간 기록 계산 알고리즘
     function calElapsedTime(timestamp) {
         const now = new Date();
-        const elapsedSeconds = Math.floor((now - timestamp) / 1000);
+        const elapsedSeconds = Math.floor((now - timestamp) / 1000); //ms -> s 전환후 소수값 버림
 
         let showTime;
         if (elapsedSeconds <= 3) {
             showTime = `방금 전`;
         }
-        else if (elapsedSeconds < 60) {
+        else if (elapsedSeconds < 60) { 
             showTime = `${elapsedSeconds}초 전`;
         }
         else if (elapsedSeconds < 3600) {
-            const mins = Math.floor(elapsedSeconds / 60)
+            const mins = Math.floor(elapsedSeconds / 60)  // 분단위로 나누어서 소수값 버림
             showTime = `${mins}분 전`;
         }
         else if (elapsedSeconds < 86400) {
@@ -242,37 +305,65 @@
     }
 
     //Update 부분 (좋아요 수)
-    $('#comment-section').on('click', '.like-btn', async function () {
+    $('#comment-section').on('click', '.like-btn', async function () {  //좋아요 클릭시 이벤트
+
         
-        //현재 댓글 가리킴
-        const commentId = $(this).closest('.comment').data('id');
+        const commentId = $(this).closest('.comment').data('id');   //현재 위치(좋아요버튼) 에서 제일 가까운 댓글(현재 댓글) 의 id
 
         //좋아요 내 텍스트 부분 정수 형변환후 증가
         const likeCountSpan = $(this).find('.like-count');
         let currentLikes = parseInt(likeCountSpan.text());
         likeCountSpan.text(++currentLikes);
 
-        //파이어베이스 내 저장
+        //파이어베이스 내 좋아요 수 업데이트
         const commentRef = doc(db, "comments", commentId);
         await updateDoc(commentRef, { likes: currentLikes });
     });
 
     //Delete 부분
-    $('#comment-section').on('click', '.delete-btn', async function () {
+    $('#comment-section').on('click', '.delete-btn', function () {      //X버튼 클릭 시 비밀번호 확인창 표시
+        const commentElement = $(this).closest('.comment');     
+        const deleteBox = commentElement.find('.delete-box');   //현재 댓글에 연결된 비밀번호 확인창
 
-        const commentElement = $(this).closest('.comment');
-        const commentId = commentElement.data('id');
-
-        
-        await deleteDoc(doc(db, "comments", commentId));
-        commentElement.remove();// 댓글 즉시 삭제
-        
+        deleteBox.css('display', 'block'); //숨김에서 표시로 전환
     });
 
-    displayComments();
+    //비밀번호 확인
+    $('#comment-section').on('click', '.box-ok', async function () {
+        const comment = $(this).closest('.comment'); 
+        const commentId = comment.data('id');   //댓글 id 추출
+        const curPassword = comment.find('.box-password').val(); //입력한 비밀번호 추출
+
+        const docs = doc(db, "comments", commentId); 
+        const commentData = await getDoc(docs); //db에 있는 같은 id의 저장된 데이터
+
+
+        const dbPassword = commentData.data().password; //db내 저장된 비밀번호
+
+        //비밀번호 비교
+        if (curPassword === dbPassword) {
+            
+            await deleteDoc(docs);
+            comment.remove();
+            alert("댓글이 삭제되었습니다.");
+        } 
+        else {
+            alert("비밀번호가 틀렸습니다.");
+        }
+    });
+
+    //비밀번호 확인창 닫기
+    $('#comment-section').on('click', '.box-close', function () {
+        const commentElement = $(this).closest('.comment'); 
+        const deleteBox = commentElement.find('.delete-box');   //현재 댓글의 비밀번호 확인창 지정
+
+        deleteBox.css('display', 'none'); //display를 none으로 전환
+    });
+
+    displayComments(); //화면 새로고침
 </script>
-<script>
-</script>
+
+
 <body style="margin-top: -18px;">
     <div class="header">
         <a href="team.html" class="fas fa-arrow-left" style="position: fixed;"></a>
@@ -286,7 +377,7 @@
                 </div>
                 <div class="name">
                     <h1>이름 및 MBTI</h1>
-                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a>   <!--주소바로가기 아이콘 삽입-->
+                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a> <!--주소바로가기 아이콘 삽입-->
                     <a href="https://velog.io/@gkdl4239/posts" class="fas fa-home"></a>
                 </div>
             </div>
@@ -301,7 +392,7 @@
         </div>
         <hr>
         <div id="comment-section"></div>
-        <hr>
+
         <div class="card-body">
             <form id="comment-form" method="POST">
                 <div class="comment-form">
