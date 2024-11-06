@@ -12,35 +12,35 @@ const auth = getAuth();
 // Member
 // GET: /members/photos
 const members = await getDocs(collection(db, "members"));
-const photos = [];
+const memberArray = [];
 
 members.forEach((e) => {
-  photos.push({
+  memberArray.push({
     memberId: e.id,
     ...e.data()
   });
 
-  const img = document.getElementById(`memberImg${photos.length}`)
+  const img = document.getElementById(`memberImg${memberArray.length}`);
 });
 
-console.log(photos);
+const img = document.getElementById(`memberImg${memberArray.length}`);
 
 document.getElementById('memberImg1').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(photos[0]));
+  localStorage.setItem("users", JSON.stringify(memberArray[0]));
 });
 
 document.getElementById('memberImg2').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(photos[1]));
+  localStorage.setItem("users", JSON.stringify(memberArray[1]));
 });
 
 document.getElementById('memberImg3').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(photos[2]));
+  localStorage.setItem("users", JSON.stringify(memberArray[2]));
 });
 
 document.getElementById('memberImg4').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(photos[3]));
+  localStorage.setItem("users", JSON.stringify(memberArray[3]));
 });
 
 document.getElementById('memberImg5').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(photos[4]));
+  localStorage.setItem("users", JSON.stringify(memberArray[4]));
 });
