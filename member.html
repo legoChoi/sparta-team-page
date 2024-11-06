@@ -209,11 +209,16 @@
         measurementId: "G-SV1F97QH20"
     };
 
-
     // Firebase 인스턴스 초기화
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // 객체 받기
+    const memberData = JSON.parse(localStorage.getItem('users'));
+    localStorage.removeItem('users')
+    console.log(memberData);
+    
+    const intro = $('.intro').children('p');
 
     let docs = await getDocs(collection(db, "comments"));
 
