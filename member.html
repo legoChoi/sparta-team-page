@@ -34,14 +34,9 @@
         margin: 50px 300px 0 300px;
     }
 
-    .wrap {
 
-        display: flex;
-    }
 
-    .profile {
-        display: block;
-    }
+ 
 
     img {
         border: 2px solid black;
@@ -53,15 +48,6 @@
         margin-left: 10px;
     }
 
-    .intro {
-
-        margin-left: 30px;
-        display: block;
-    }
-
-    .intro>p {
-        padding-left: 20px;
-    }
 
     a {
         text-decoration: none;
@@ -182,6 +168,84 @@
     .like-count{
         font-size: 20px;
         -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 자기소개 섹션 */
+
+     /* 전체 wrap 스타일 */
+     .wrap {
+        display: flex;
+        gap: 50px;
+        padding: 40px;
+        background-color: #f4f8fb;
+        border-radius: 20px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* 프로필 영역 */
+    .profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .profile .image img {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        border: 5px solid #4A90E2;
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+        object-fit: cover;
+    }
+
+    .profile .name h1 {
+        font-size: 32px;
+        color: #333;
+        font-family: 'Black Han Sans', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    .profile .name a {
+        font-size: 32px;
+        color: #4A90E2;
+        margin: 0 10px;
+        transition: color 0.3s;
+    }
+
+    .profile .name a:hover {
+        color: #1a73e8;
+    }
+
+    /* 소개 영역 */
+    .intro {
+        flex: 1;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .intro h2 {
+        font-size: 24px;
+        color: #4A90E2;
+        font-family: 'Gowun Dodum', sans-serif;
+        margin-bottom: 15px;
+        border-bottom: 3px solid #4A90E2;
+        padding-bottom: 8px;
+    }
+
+    .intro p {
+        font-size: 20px;
+        color: #555;
+        line-height: 1.8;
+        font-family: 'Jua', sans-serif;
+        margin-bottom: 20px;
+        min-height: 120px; /* 최소 높이 설정 */
+        max-width: 100%; /* 최대 너비 설정 */
     }
 </style>
 
@@ -388,8 +452,8 @@
                 </div>
                 <div class="name">
                     <h1>이름 및 MBTI</h1>
-                    <a href="https://github.com/gkdl4239" class="fab fa-github"></a> <!--주소바로가기 아이콘 삽입-->
-                    <a href="https://velog.io/@gkdl4239/posts" class="fas fa-home"></a>
+                    <a href="https://github.com/gkdl4239" class="fab fa-github"target="_blank"></a> <!--주소바로가기 아이콘 삽입-->
+                    <a href="https://velog.io/@gkdl4239/posts" class="fas fa-home"target="_blank"></a>
                 </div>
             </div>
             <div class="intro">
@@ -401,6 +465,8 @@
                 <p>저는 ~</p>
             </div>
         </div>
+
+        <!-- 댓글 세션 -->
         <hr>
         <div id="comment-section"></div>
 
