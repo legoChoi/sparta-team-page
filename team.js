@@ -14,16 +14,18 @@ const auth = getAuth();
 const members = await getDocs(collection(db, "members"));
 const memberArray = [];
 
-members.forEach((e) => {
-  memberArray.push({
-    memberId: e.id,
-    ...e.data()
+// 세션 스토리지에 멤버 데이터 있으면 세션 스토리지에서 꺼내옴
+if (sessionStorage.getItem('members')) memberArray.push(...JSON.parse(sessionStorage.getItem('members')));
+else { // 세션 스토리지에 멤버 데이터 없을경우 DB에서 꺼내와서 다시 저장
+  members.forEach((e) => {
+    memberArray.push({
+      memberId: e.id,
+      ...e.data()
+    });
   });
 
-  const img = document.getElementById(`memberImg${memberArray.length}`);
-});
-
-const img = document.getElementById(`memberImg${memberArray.length}`);
+  sessionStorage.setItem('members', JSON.stringify(memberArray));
+}
 
 document.getElementById('memberImg1').addEventListener('click', () => {
   localStorage.setItem("users", JSON.stringify(memberArray[0]));
