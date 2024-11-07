@@ -405,10 +405,10 @@
 
         //파이어베이스 내 좋아요 수 업데이트
         const commentRef = doc(db, "members", uid, "comments", commentId);
-        await updateDoc(commentRef, { likes: currentLikes });
+        await updateDoc(commentRef, { likeCount: currentLikes });
 
         const likeColor = $(this)
-        likeColor.css('color', '#29367c')
+        likeColor.css('color', '#29367c')  // 좋아요 누를시 색 변환
 
     });
 
