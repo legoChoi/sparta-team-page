@@ -33,8 +33,9 @@ const images = document.querySelectorAll('div.container img');
 
 images.forEach((img, idx) => {
   img.addEventListener('click', function() {
-    localStorage.setItem("users", JSON.stringify(memberArray[idx]));
-    localStorage.setItem("memberId", memberArray[idx].memberId);
+    // 멤버 정보 세션 스토리지에 저장 후 이동
+    sessionStorage.setItem("users", JSON.stringify(memberArray[idx]));
+    sessionStorage.setItem("memberId", memberArray[idx].memberId);
     location.href = './member.html';
   });
 });

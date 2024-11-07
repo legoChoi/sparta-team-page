@@ -271,9 +271,9 @@
 
     // 객체 받기
     const sessionNick = sessionStorage.getItem("nick");
-    const uid = localStorage.getItem("memberId");
-    const memberData = JSON.parse(localStorage.getItem('users'));
-    localStorage.removeItem('users')
+    const uid = sessionStorage.getItem("memberId");
+    const memberData = JSON.parse(sessionStorage.getItem('users'));
+    sessionStorage.removeItem('users')
     console.log(memberData);
 
     const intro = $('.intro').children('p');
