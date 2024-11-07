@@ -253,6 +253,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script type="module">
+    import { firebaseConfig } from './config.js';
     // Firebase SDK 라이브러리 가져오기
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
@@ -264,16 +265,6 @@
 
 
     // Firebase 구성 정보 설정
-    const firebaseConfig = {
-        apiKey: "AIzaSyCc-iMAe7db19Fwsr9KuuDhKGLRVvHmJXU",
-        authDomain: "sprta-a08ed.firebaseapp.com",
-        projectId: "sprta-a08ed",
-        storageBucket: "sprta-a08ed.firebasestorage.app",
-        messagingSenderId: "1079179643325",
-        appId: "1:1079179643325:web:0d57d609fccebefea22ad4",
-        measurementId: "G-SV1F97QH20"
-    };
-
     // Firebase 인스턴스 초기화
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
