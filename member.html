@@ -279,6 +279,8 @@
     const db = getFirestore(app);
 
     // 객체 받기
+    const sessionNick = localStorage.getItem("nick");
+    const uid = localStorage.getItem("memberId");
     const memberData = JSON.parse(localStorage.getItem('users'));
     localStorage.removeItem('users')
     console.log(memberData);
@@ -306,8 +308,6 @@
     memberData.links.forEach((e, idx) => {
         if (e != 'undefined') links[idx].href = e;
     });
-
-    let docs = await getDocs(collection(db, "comments"));
 
     // Create 부분
     $("#comment-form").submit(async function (event) { //댓글 입력시 이벤트
@@ -404,7 +404,7 @@
         likeCountSpan.text(++currentLikes);
 
         //파이어베이스 내 좋아요 수 업데이트
-        const commentRef = doc(db, "comments", commentId);
+        const commentRef = doc(db, "members", uid, "comments", commentId);
         await updateDoc(commentRef, { likes: currentLikes });
 
         const likeColor = $(this)

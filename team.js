@@ -34,6 +34,7 @@ const images = document.querySelectorAll('div.container img');
 images.forEach((img, idx) => {
   img.addEventListener('click', function() {
     localStorage.setItem("users", JSON.stringify(memberArray[idx]));
+    localStorage.setItem("memberId", memberArray[idx].memberId);
     location.href = './member.html';
   });
 });

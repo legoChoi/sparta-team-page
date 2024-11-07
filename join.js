@@ -2,7 +2,7 @@ import { firebaseConfig } from './config.js';
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { collection, addDoc, getDocs, doc, getDoc, query } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, getDoc, query, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { getAuth, setPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 // Initialize Firebase
@@ -23,17 +23,18 @@ document.getElementById('btn_join').addEventListener('click', () => {
   }
 
   createUserWithEmailAndPassword(auth, email, password)
-    .then(async (userCredential) => {
-      console.log(userCredential);
-      
-      // Signed up 
+    .then((userCredential) => {
+      // 회원가입 성공
       const user = userCredential.user;
+      const userDocRef = doc(db, "users", user.uid); 
 
-      const newUser = await addDoc(collection(db, 'users'), {
+      // Firestore에 사용자 정보 저장
+      return setDoc(userDocRef, {
         id: email,
-        nick,
-      })
-
+        nick: nick
+      });
+    })
+    .then(() => {
       alert('회원가입 성공');
       location.href = "./login.html";
     })

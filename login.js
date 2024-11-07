@@ -4,7 +4,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { collection, addDoc, getDocs, doc, getDoc, query } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { getAuth, setPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
- 
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -26,10 +26,24 @@ document.getElementById('btn_login').addEventListener('click', () => {
   signInWithEmailAndPassword(auth, logInId, logInPw)
     .then((userCredential) => {
       // Signed in 
-      console.log(userCredential);
-      alert("로그인 성공!");
-      location.href = "home.html";
-      // ...
+      const user = userCredential.user;
+      
+      console.log(user);
+      const userDocRef = doc(db, "users", user.uid);
+      return getDoc(userDocRef); 
+
+    }) .then((userSnapshot) => {
+      if (userSnapshot.exists()) { // 문서 존재 여부 확인
+        const userData = userSnapshot.data();
+        console.log("Firestore에서 가져온 데이터:", userData);
+
+        localStorage.setItem("nick", userData.nick);  // 닉네임 저장
+        localStorage.setItem("password", logInPw);    //비밀번호 저장
+        alert("로그인 성공!");
+        location.href = "home.html"; // 홈 페이지로 이동
+      } else {
+        alert("유저 데이터를 찾을 수 없습니다."); 
+      }
     })
     .catch((error) => {
       const errorCode = error.code;
