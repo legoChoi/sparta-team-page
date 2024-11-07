@@ -11,12 +11,13 @@ const auth = getAuth();
 
 // Member
 // GET: /members/photos
-const members = await getDocs(collection(db, "members"));
 const memberArray = [];
 
 // 세션 스토리지에 멤버 데이터 있으면 세션 스토리지에서 꺼내옴
 if (sessionStorage.getItem('members')) memberArray.push(...JSON.parse(sessionStorage.getItem('members')));
 else { // 세션 스토리지에 멤버 데이터 없을경우 DB에서 꺼내와서 다시 저장
+  const members = await getDocs(collection(db, "members"));
+  
   members.forEach((e) => {
     memberArray.push({
       memberId: e.id,
