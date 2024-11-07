@@ -28,22 +28,18 @@ else { // 세션 스토리지에 멤버 데이터 없을경우 DB에서 꺼내�
   sessionStorage.setItem('members', JSON.stringify(memberArray));
 }
 
-document.getElementById('memberImg1').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(memberArray[0]));
-});
+const images = document.querySelectorAll('div.container img');
 
-document.getElementById('memberImg2').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(memberArray[1]));
-});
-
-document.getElementById('memberImg3').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(memberArray[2]));
-});
-
-document.getElementById('memberImg4').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(memberArray[3]));
-});
-
-document.getElementById('memberImg5').addEventListener('click', () => {
-  localStorage.setItem("users", JSON.stringify(memberArray[4]));
+images.forEach((img, idx) => {
+  img.addEventListener('click', function() {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        localStorage.setItem("users", JSON.stringify(memberArray[idx]));
+        location.href = './member.html';
+      } else { 
+        alert('세션 만료');
+        location.href = './login.html';
+      }
+    });
+  });
 });
