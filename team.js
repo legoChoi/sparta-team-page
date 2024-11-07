@@ -28,18 +28,12 @@ else { // 세션 스토리지에 멤버 데이터 없을경우 DB에서 꺼내�
   sessionStorage.setItem('members', JSON.stringify(memberArray));
 }
 
+// 멤버 사진 클릭 후 상세 페이지로 이동
 const images = document.querySelectorAll('div.container img');
 
 images.forEach((img, idx) => {
   img.addEventListener('click', function() {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        localStorage.setItem("users", JSON.stringify(memberArray[idx]));
-        location.href = './member.html';
-      } else { 
-        alert('세션 만료');
-        location.href = './login.html';
-      }
-    });
+    localStorage.setItem("users", JSON.stringify(memberArray[idx]));
+    location.href = './member.html';
   });
 });
