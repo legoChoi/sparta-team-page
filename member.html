@@ -262,12 +262,14 @@
     import { updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 
     // Firebase 구성 정보 설정
     // Firebase 인스턴스 초기화
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth();
 
     // 객체 받기
     const sessionNick = sessionStorage.getItem("nick");
@@ -301,24 +303,30 @@
     });
 
     // Create 부분
-    $("#comment-form").submit(async function (event) { //댓글 입력시 이벤트
+    $("#comment-form").submit(function (event) { //댓글 입력시 이벤트
         event.preventDefault(); // 새로고침 방지
 
-        const content = $('#content').val();
-        const createdAt = new Date();        //타임스탬프는 입력할때 시간
+        onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const content = $('#content').val();
+                    const createdAt = new Date();        //타임스탬프는 입력할때 시간
 
-        const commentData = {
-            'nick': sessionNick, // 로컬 스토리지에서 가져온 닉네임
-            'contents': content,
-            'likeCount': 0,
-            'createdAt': createdAt
-        };
+                    const commentData = {
+                        'nick': sessionNick, // 로컬 스토리지에서 가져온 닉네임
+                        'contents': content,
+                        'likeCount': 0,
+                        'createdAt': createdAt
+                    };
 
-        await addDoc(collection(db, "members", uid, "comments"), commentData);
-        alert('댓글 저장 완료!');
+                    await addDoc(collection(db, "members", uid, "comments"), commentData);
+                    alert('댓글 저장 완료!');
 
-        $('#content').val(''); // 입력창 초기화
-        displayComments(); // 댓글 새로고침
+                    $('#content').val(''); // 입력창 초기화
+                    displayComments(); // 댓글 새로고침           
+                } else { 
+                    alert('권한이 없습니다.');
+                }
+        });
     });
 
     //Read 부분
@@ -384,43 +392,52 @@
     }
 
     //Update 부분 (좋아요 수)
-    $('#comment-section').on('click', '.like-btn', async function () {  //좋아요 클릭시 이벤트
+    $('#comment-section').on('click', '.like-btn', function () {  //좋아요 클릭시 이벤트
+        onAuthStateChanged(auth, async(user) => {
+                if (user) {
+                    const commentId = $(this).closest('.comment').data('id');   //현재 위치(좋아요버튼) 에서 제일 가까운 댓글(현재 댓글) 의 id
 
+                    //좋아요 내 텍스트 부분 정수 형변환후 증가
+                    const likeCountSpan = $(this).siblings('.like-count');
+                    let currentLikes = parseInt(likeCountSpan.text());
+                    likeCountSpan.text(++currentLikes);
 
-        const commentId = $(this).closest('.comment').data('id');   //현재 위치(좋아요버튼) 에서 제일 가까운 댓글(현재 댓글) 의 id
+                    //파이어베이스 내 좋아요 수 업데이트
+                    const commentRef = doc(db, "members", uid, "comments", commentId);
+                    await updateDoc(commentRef, { likeCount: currentLikes });
 
-        //좋아요 내 텍스트 부분 정수 형변환후 증가
-        const likeCountSpan = $(this).siblings('.like-count');
-        let currentLikes = parseInt(likeCountSpan.text());
-        likeCountSpan.text(++currentLikes);
-
-        //파이어베이스 내 좋아요 수 업데이트
-        const commentRef = doc(db, "members", uid, "comments", commentId);
-        await updateDoc(commentRef, { likeCount: currentLikes });
-
-        const likeColor = $(this)
-        likeColor.css('color', '#29367c')  // 좋아요 누를시 색 변환
-
+                    const likeColor = $(this)
+                    likeColor.css('color', '#29367c')  // 좋아요 누를시 색 변환
+                } else { 
+                    alert('권한이 없습니다.');
+                }
+        });
     });
 
     
 
     //Delete 부분(댓글)
     $('#comment-section').on('click', '.delete-btn', function () {      
-    const commentElement = $(this).closest('.comment');
-    const commentNick = commentElement.find('strong').text(); //댓글에 저장된 닉네임 추출
-    const sessionNick = sessionStorage.getItem('nick'); // 세션 스토리지에 저장된 닉네임 가져오기
+        onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const commentElement = $(this).closest('.comment');
+                    const commentNick = commentElement.find('strong').text(); //댓글에 저장된 닉네임 추출
+                    const sessionNick = sessionStorage.getItem('nick'); // 세션 스토리지에 저장된 닉네임 가져오기
+                    
+                    //닉네임 비교
+                    if (commentNick !== sessionNick) {
+                        alert("본인이 작성한 댓글이 아닙니다!")
+                        return;
+                    }
 
-    //닉네임 비교
-    if (commentNick !== sessionNick) {
-        alert("본인이 작성한 댓글이 아닙니다!")
-        return;
-    }
-
-    //닉네임 일치시 비밀번화 확인창 표시
-    const deleteBox = commentElement.find('.delete-box')
-    deleteBox.css('display', 'block');
-});
+                    //닉네임 일치시 비밀번화 확인창 표시
+                    const deleteBox = commentElement.find('.delete-box')
+                    deleteBox.css('display', 'block');            
+                } else { 
+                    alert('권한이 없습니다.');
+                }
+        });
+    });
 
     //비밀번호 확인
     $('#comment-section').on('click', '.box-ok', async function () {
