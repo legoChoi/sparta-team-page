@@ -37,8 +37,8 @@ document.getElementById('btn_login').addEventListener('click', () => {
         const userData = userSnapshot.data();
         console.log("Firestore에서 가져온 데이터:", userData);
 
-        localStorage.setItem("nick", userData.nick);  // 닉네임 저장
-        localStorage.setItem("password", logInPw);    //비밀번호 저장
+        sessionStorage.setItem("nick", userData.nick);  // 닉네임 저장
+        sessionStorage.setItem("password", logInPw);    //비밀번호 저장
         alert("로그인 성공!");
         location.href = "home.html"; // 홈 페이지로 이동
       } else {

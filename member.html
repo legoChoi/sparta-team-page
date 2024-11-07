@@ -279,7 +279,7 @@
     const db = getFirestore(app);
 
     // 객체 받기
-    const sessionNick = localStorage.getItem("nick");
+    const sessionNick = sessionStorage.getItem("nick");
     const uid = localStorage.getItem("memberId");
     const memberData = JSON.parse(localStorage.getItem('users'));
     localStorage.removeItem('users')
@@ -414,21 +414,30 @@
 
     
 
-    //Delete 부분
-    $('#comment-section').on('click', '.delete-btn', function () {      //X버튼 클릭 시 비밀번호 확인창 표시
-        const commentElement = $(this).closest('.comment');
-        const deleteBox = commentElement.find('.delete-box');   //현재 댓글에 연결된 비밀번호 확인창
+    //Delete 부분(댓글)
+    $('#comment-section').on('click', '.delete-btn', function () {      
+    const commentElement = $(this).closest('.comment');
+    const commentNick = commentElement.find('strong').text(); //댓글에 저장된 닉네임 추출
+    const sessionNick = sessionStorage.getItem('nick'); // 세션 스토리지에 저장된 닉네임 가져오기
 
-        deleteBox.css('display', 'block'); //숨김에서 표시로 전환
-    });
+    //닉네임 비교
+    if (commentNick !== sessionNick) {
+        alert("본인이 작성한 댓글이 아닙니다!")
+        return;
+    }
+
+    //닉네임 일치시 비밀번화 확인창 표시
+    const deleteBox = commentElement.find('.delete-box')
+    deleteBox.css('display', 'block');
+});
 
     //비밀번호 확인
     $('#comment-section').on('click', '.box-ok', async function () {
-        const comment = $(this).closest('.comment');
+        const comment = $(this).closest('.comment')
         const commentId = comment.data('id');   //댓글 id 추출
         const curPassword = comment.find('.box-password').val(); //입력한 비밀번호 추출
-
-        const sessionPwd = localStorage.getItem('password');
+        
+        const sessionPwd = sessionStorage.getItem('password');
 
         //비밀번호 비교
         if (curPassword === sessionPwd) {
